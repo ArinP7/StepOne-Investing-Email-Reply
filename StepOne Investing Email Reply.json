@@ -1,0 +1,1226 @@
+{
+  "name": "StepOne Investing Email Reply",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "documentId": {
+          "__rl": true,
+          "value": "1bGdyJ6tALqu-1Xs_DgVUc2jNKLzwlkmC3VgW4H8FUdE",
+          "mode": "list",
+          "cachedResultName": "Test n8n",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1bGdyJ6tALqu-1Xs_DgVUc2jNKLzwlkmC3VgW4H8FUdE/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1515659725,
+          "mode": "list",
+          "cachedResultName": "Form Responses 1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1bGdyJ6tALqu-1Xs_DgVUc2jNKLzwlkmC3VgW4H8FUdE/edit#gid=1515659725"
+        },
+        "event": "rowAdded",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTrigger",
+      "typeVersion": 1,
+      "position": [
+        1072,
+        0
+      ],
+      "id": "e11f71d0-f2bb-4631-9a23-00075ccbf72a",
+      "name": "Google Sheets Trigger",
+      "alwaysOutputData": true,
+      "retryOnFail": true,
+      "notesInFlow": true,
+      "credentials": {
+        "googleSheetsTriggerOAuth2Api": {
+          "id": "xrSZa1YJNPutqplo",
+          "name": "Google Sheets Trigger account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "amount": 30
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        2016,
+        0
+      ],
+      "id": "79b2b411-1cda-46f2-b566-80939a4131b8",
+      "name": "Wait",
+      "webhookId": "9ecd81d8-c61d-4cd2-875d-aa026852cfb3"
+    },
+    {
+      "parameters": {
+        "amount": 30
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        3408,
+        544
+      ],
+      "id": "96e01780-591a-4375-bb4b-52cde48c5aaf",
+      "name": "Wait1",
+      "webhookId": "f6045e21-a836-4f5a-90dd-5a48d6c59c25",
+      "alwaysOutputData": true,
+      "retryOnFail": true,
+      "notesInFlow": true
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1bGdyJ6tALqu-1Xs_DgVUc2jNKLzwlkmC3VgW4H8FUdE",
+          "mode": "list",
+          "cachedResultName": "Test n8n",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1bGdyJ6tALqu-1Xs_DgVUc2jNKLzwlkmC3VgW4H8FUdE/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1515659725,
+          "mode": "list",
+          "cachedResultName": "Form Responses 1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1bGdyJ6tALqu-1Xs_DgVUc2jNKLzwlkmC3VgW4H8FUdE/edit#gid=1515659725"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        3840,
+        -96
+      ],
+      "id": "b347b242-ea78-4b5f-8572-2f3cc1e57b08",
+      "name": "Get row(s) in sheet1",
+      "alwaysOutputData": true,
+      "retryOnFail": true,
+      "notesInFlow": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "2rw7CcF6EQRABuAC",
+          "name": "Google Sheets account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// 1. Get all items from the input\nconst items = $input.all();\n\n// 2. Find the highest existing ID number to start our sequence\nlet lastIdNumber = 0;\nitems.forEach(item => {\n  const id = item.json['Client ID'];\n  if (id && typeof id === 'string') {\n    const match = id.match(/\\d+/); // Extracts the numbers from \"AP0011\"\n    if (match) {\n      const num = parseInt(match[0], 10);\n      if (num > lastIdNumber) lastIdNumber = num;\n    }\n  }\n});\n\n// 3. Map through items and fill missing IDs\nreturn items.map(item => {\n  let clientId = item.json['Client ID'];\n\n  // If the ID is empty or 'empty' string, generate the next one\n  if (!clientId || clientId === 'empty' || clientId.toString().trim() === '') {\n    lastIdNumber++;\n    // Formats back to \"AP\" + 4 digits (e.g., AP0012)\n    clientId = `AP${lastIdNumber.toString().padStart(4, '0')}`;\n  }\n\n  return {\n    json: {\n      ...item.json,\n      \"Client ID\": clientId,\n      \"generated_status\": item.json['Client ID'] ? \"Original\" : \"Auto-Generated\"\n    }\n  };\n});"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        4032,
+        -96
+      ],
+      "id": "6bfc2dfb-db9b-4ea1-aafd-c5aea78598da",
+      "name": "Code in JavaScript2 Final Data"
+    },
+    {
+      "parameters": {
+        "jsCode": "// 1. Get all items from the input\nconst items = $input.all();\nif (items.length === 0) return [];\n\n// 2. Identify the most recent item (the last one in the list)\nconst mostRecentItem = items[items.length - 1].json;\n\n// 3. Find the highest existing ID number across all rows to determine the next ID\nlet maxIdNumber = 0;\nitems.forEach(item => {\n  const id = item.json['Client ID'];\n  if (id && typeof id === 'string') {\n    const match = id.match(/\\d+/); // Extracts numbers from \"AP0011\"\n    if (match) {\n      const num = parseInt(match[0], 10);\n      if (num > maxIdNumber) maxIdNumber = num;\n    }\n  }\n});\n\n// 4. Determine the Client ID for the most recent entry\nlet finalClientId = mostRecentItem['Client ID'];\n\n// If the most recent row's ID is missing or \"empty\", generate the next one\nif (!finalClientId || finalClientId === 'empty' || finalClientId.toString().trim() === '') {\n  const nextIdNumber = maxIdNumber + 1;\n  finalClientId = `AP${nextIdNumber.toString().padStart(4, '0')}`;\n}\n\n// 5. Return only the most recent item with the corrected ID\nreturn [{\n  json: {\n    ...mostRecentItem,\n    \"Client ID\": finalClientId,\n    \"processed_at\": new Date().toISOString()\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        4032,
+        128
+      ],
+      "id": "0667abe5-35bc-45cc-811e-9145a9f9ca65",
+      "name": "Code in JavaScript2"
+    },
+    {
+      "parameters": {
+        "jsCode": "/**\n * Advanced User Validation & Deduplication\n * Logic: Checks (Email -> Name -> Gender) to flag invalid/duplicate users.\n */\n\nconst items = $input.all();\nif (items.length === 0) return [];\n\n// 1. Identify the 'Recent' item (the newest entry from the trigger)\n// We assume the last item in the array is the new incoming data\nconst recent = items[items.length - 1].json;\n\nconst recentEmail  = (recent.Email || \"\").toLowerCase().trim();\nconst recentName   = (recent.Name || \"\").toLowerCase().trim();\nconst recentGender = (recent.Gender || \"\").toLowerCase().trim();\n\n// 2. Scan all PREVIOUS items in the database for a triple-match\nlet isInvalidUser = false;\n\n// We loop through all items except the very last one (which is our current input)\nfor (let i = 0; i < items.length - 1; i++) {\n    const existing = items[i].json;\n    \n    const emailMatch  = (existing.Email || \"\").toLowerCase().trim() === recentEmail;\n    const nameMatch   = (existing.Name || \"\").toLowerCase().trim() === recentName;\n    const genderMatch = (existing.Gender || \"\").toLowerCase().trim() === recentGender;\n\n    // Strict validation: All three must match to flag as invalid\n    if (emailMatch && nameMatch && genderMatch) {\n        isInvalidUser = true;\n        break; \n    }\n}\n\n// 3. Construct Output with Status Flags\n// This allows the next node (Filter/If) to decide the path\nreturn [{\n    json: {\n        ...recent,\n        validation_status: isInvalidUser ? \"invalid user\" : \"valid user\",\n        response: \"yes\", // Hardcoded as requested\n        timestamp: recent.Timestamp || new Date().toISOString(),\n        duplicate_check: isInvalidUser ? \"MATCH FOUND: Duplicate Identity\" : \"UNIQUE: New User\"\n    }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1328,
+        0
+      ],
+      "id": "9644d70b-de40-48cd-b4e3-9b1785b11887",
+      "name": "Code in JavaScript Shortlist",
+      "alwaysOutputData": true,
+      "retryOnFail": true,
+      "notesInFlow": true
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all();\n\nreturn items.map(item => {\n  const gender = (item.json.Gender || \"\").toLowerCase();\n  let title = \"\";\n\n  if (gender === \"male\") {\n    title = \"Mr.\";\n  } else if (gender === \"female\") {\n    title = \"Ms.\";\n  }\n\n  return {\n    json: {\n      ...item.json,\n      Name: `${title} ${item.json.Name}`\n    }\n  };\n});\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1568,
+        0
+      ],
+      "id": "8aaedb99-1f55-4fbd-9357-d369f30c8fca",
+      "name": "Code in JavaScript3 Gender Find"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $json.Email }}",
+        "subject": "Confirmation of Application Details – StepOne Investing",
+        "emailType": "text",
+        "message": "=Dear {{ $json.Name }},\n\nWe are pleased to know that you are interested in joining StepOne Investing.\n\nAttached below are the details you have submitted during your application process. We request you to kindly review the information and confirm that all details provided are accurate and true to the best of your knowledge.\n\nPlease also confirm that you have applied to join StepOne Investing of your own accord after carefully reading and agreeing to our Terms and Conditions.\n\nKindly reply with either \"Yes\" or \"No\" without any further remarks. Please ensure your response is sent within the next 15 minutes to maintain the current project timeline.\n\nIf you reply “Yes”, your Investor ID will be generated and communicated to you within 24–48 hours.\n\nIf you reply “No”, your application will be automatically removed from our system.\n\nThank you for your prompt attention.\n\nWarm regards,\nTeam StepOne Investing\n",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1808,
+        0
+      ],
+      "id": "eedd8b33-2d1c-4abb-8b59-161e7b658cde",
+      "name": "Send a confirmation message",
+      "webhookId": "2c7dc39b-c81e-4bc9-829b-e00220012d4a",
+      "alwaysOutputData": true,
+      "retryOnFail": true,
+      "notesInFlow": true,
+      "maxTries": 3,
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "OZZ1L0iofs7FKdQa",
+          "name": "Gmail account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1sM_Ypb4HJoutW38TiT87JDUnRsdiN91CWPy-OEVS2Ks",
+          "mode": "list",
+          "cachedResultName": "hi",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1sM_Ypb4HJoutW38TiT87JDUnRsdiN91CWPy-OEVS2Ks/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1sM_Ypb4HJoutW38TiT87JDUnRsdiN91CWPy-OEVS2Ks/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        2336,
+        0
+      ],
+      "id": "1d1d3c06-401e-403c-a55d-28523d18f9e9",
+      "name": "Get row(s) in sheet Host Gmail",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "2rw7CcF6EQRABuAC",
+          "name": "Google Sheets account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "limit": 1,
+        "filters": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        2528,
+        0
+      ],
+      "id": "3762b2c7-2314-4104-9d01-eefe30d1ae7b",
+      "name": "Get many messages Check Response",
+      "webhookId": "ba14c581-62d9-4c46-ae9f-48c040f7b585",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "OZZ1L0iofs7FKdQa",
+          "name": "Gmail account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// 1. Define keywords (lowercase only)\nconst yesWords = [\"yes\",\"Yes\" ,\"YES\" ,\"yeah\", \"yup\", \"sure\", \"ok\", \"okay\", \"yess\", \"agree\"];\nconst noWords = [\"no\", \"nope\",\"NO\" ,\"No\" ,\"not\", \"never\", \"nah\"];\n\nconst results = [];\n\nfor (const item of $input.all()) {\n  // 2. Clean and Lowercase the text\n  // This ensures \"YES!!!\" becomes \"yes\" and handles paragraphs\n  const rawSnippet = item.json.snippet || \"\";\n  const cleanText = rawSnippet.toLowerCase().replace(/[^a-z\\s]/g, \" \");\n  \n  // 3. WHOLE WORD MATCHING: Split into a Set for exact matches only\n  // This prevents \"Yesterday\" from triggering \"yes\"\n  const wordsInSnippet = new Set(cleanText.split(/\\s+/));\n\n  let response = null;\n  const hasYes = yesWords.some(word => wordsInSnippet.has(word));\n  const hasNo = noWords.some(word => wordsInSnippet.has(word));\n\n  // 4. CONFLICT HANDLING\n  if (hasYes && !hasNo) {\n    response = \"yes\";\n  } else if (hasNo && !hasYes) {\n    response = \"no\";\n  } else if (hasYes && hasNo) {\n    // If paragraph contains both \"yes\" and \"no\", label as mixed\n    response = \"mixed/check-manual\";\n  }\n\n  // 5. GMAIL FIELD FIX: Dig into headers if 'From' is missing\n  let senderEmail = item.json.From; \n  if (!senderEmail && item.json.payload?.headers) {\n    const fromHeader = item.json.payload.headers.find(h => h.name === 'From');\n    senderEmail = fromHeader ? fromHeader.value : \"Unknown\";\n  }\n\n  if (response) {\n    results.push({\n      json: {\n        response: response,\n        emailId: item.json.threadId || item.json.id,\n        senderEmail: senderEmail,\n        snippetPreview: rawSnippet.substring(0, 50) + \"...\"\n      }\n    });\n  }\n}\n\nreturn results;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3008,
+        0
+      ],
+      "id": "8c4b8f10-0c01-44f3-8fd9-ff69044c4a21",
+      "name": "Code in JavaScript1 Response Detection",
+      "alwaysOutputData": true,
+      "retryOnFail": true,
+      "notesInFlow": true
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "93f1f064-7064-4699-a09d-3efbf62312ac",
+              "leftValue": "={{ $json.response }}",
+              "rightValue": "yes",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            },
+            {
+              "id": "0c7c932c-4041-4053-a71e-696b5b9fe9db",
+              "leftValue": "={{ $json.response }}",
+              "rightValue": "no",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        3200,
+        0
+      ],
+      "id": "ef26030e-3dad-44cf-afcd-bdd5c77acda4",
+      "name": "If Check Empty or Not empty",
+      "alwaysOutputData": true,
+      "notesInFlow": true
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $json.extractedEmail }}",
+        "subject": "Acknowledgement of Your Response - StepOne Investing",
+        "emailType": "text",
+        "message": "=Dear {{ $json.extractedName }},\n\nThank you for your response.\n\nWe understand and respect your decision at this time. We truly appreciate the opportunity to connect with you and introduce StepOne Investing.\n\nShould you wish to explore investment opportunities with us in the future, we would be pleased to assist you. Our team will remain available for any questions or support you may need.\n\nWishing you continued success in all your endeavors.\n\nWarm regards,\nTeam StepOne Investing",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        3664,
+        480
+      ],
+      "id": "62f1014d-d607-442c-a0f5-87a25b6427d6",
+      "name": "Send a message1 Sorry",
+      "webhookId": "fb0783ec-2c6f-4955-bcb2-0c59c5257890",
+      "alwaysOutputData": true,
+      "retryOnFail": true,
+      "notesInFlow": true,
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "OZZ1L0iofs7FKdQa",
+          "name": "Gmail account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all();\n\nreturn items.map(item => {\n  const gender = (item.json.Gender || \"\").toLowerCase().trim();\n  let baseName = (item.json.Name || \"Customer\").trim();\n  let title = \"\";\n\n  // Gender title logic\n  if (gender === \"male\") {\n    title = \"Mr.\";\n  } else if (gender === \"female\") {\n    title = \"Ms.\";\n  }\n\n  // Prevent double title (Mr. Mr. Arin)\n  let finalName = baseName;\n  if (title && !finalName.startsWith(title)) {\n    finalName = `${title} ${baseName}`;\n  }\n\n  // If gender is not male/female → title is \"\", so name stays unchanged\n  return {\n    json: {\n      ...item.json,\n      Name: finalName\n    }\n  };\n});\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        4032,
+        352
+      ],
+      "id": "76a96fce-b846-4bc5-bc6c-4099cdfeaa4e",
+      "name": "Code in JavaScript4 Gender"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $json.Email }}",
+        "subject": "Welcome to StepOne Investing – Your Client ID Details",
+        "emailType": "text",
+        "message": "=Dear {{ $json.Name }},\n\nWe are delighted to welcome you to StepOne Investing as an Individual Investor and Shareholder.\n\nYour Client ID is {{ $json['Client ID'] }}\nPlease ensure that this Client ID is kept secure and confidential, as it will be required for all future communications and transactions with us.\n\nWe look forward to a long and successful association with you.\n\nWarm regards,\nTeam StepOne Investing",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        4032,
+        592
+      ],
+      "id": "156d4eab-a9c1-48ce-83d4-88f3e7fe3af0",
+      "name": "Send a message2 Client ID",
+      "webhookId": "aae12332-5a97-40d2-a0fc-2d154c7a9abb",
+      "alwaysOutputData": true,
+      "retryOnFail": true,
+      "notesInFlow": true,
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "OZZ1L0iofs7FKdQa",
+          "name": "Gmail account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "/**\n * Advanced Name & Title Formatter (Safe Version)\n */\n\nreturn $input.all().map(item => {\n    const json = item.json;\n    \n    // 1. Base name fallback\n    let baseName = json.extractedName || json.Name || \"Customer\";\n    baseName = baseName.trim();\n\n    // 2. Normalize gender\n    const gender = (json.Gender || \"\").toLowerCase().trim();\n\n    // 3. Decide title ONLY for male/female\n    let title = \"\";\n    if (gender === \"male\") {\n        title = \"Mr.\";\n    } else if (gender === \"female\") {\n        title = \"Ms.\";\n    }\n\n    // 4. Remove any existing title first (defensive cleanup)\n    const cleanedName = baseName.replace(/^(mr\\.?|ms\\.?|mrs\\.?)/i, \"\").trim();\n\n    // 5. Final logic\n    let finalName = cleanedName;\n    if (title) {\n        finalName = `${title} ${cleanedName}`;\n    }\n    // If gender not male/female → just cleanedName\n\n    return {\n        json: {\n            ...json,\n            formattedName: finalName,\n            Name: finalName\n        }\n    };\n});\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3664,
+        240
+      ],
+      "id": "ec7f6eb7-f62a-4768-b16e-0029a5f65912",
+      "name": "Code in JavaScript4 Gender1"
+    },
+    {
+      "parameters": {
+        "jsCode": "// 1. Access the workflow's persistent memory\nconst staticData = $getWorkflowStaticData('global');\n\n// 2. Use a Unique Identifier (Email) so users don't share a counter\nconst userKey = $input.item.json.senderEmail || $input.item.json.extractedEmail || \"unknown\";\n\n// 3. Initialize the storage object if this is the first time the workflow ever runs\nif (!staticData.userCounters) {\n    staticData.userCounters = {};\n}\n\n// 4. Increment ONLY this specific user's count\nstaticData.userCounters[userKey] = (staticData.userCounters[userKey] || 0) + 1;\n\nconst currentCount = staticData.userCounters[userKey];\n\n// 5. Output the data for your \"If Node\" to check\nreturn {\n  json: {\n    ...$input.item.json,\n    iterationCount: currentCount,\n    shouldBreakLoop: currentCount >= 3, // The logic gate\n    userKey: userKey\n  }\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3408,
+        128
+      ],
+      "id": "2fbc58a5-d057-45d3-8e41-b07e8ecefa06",
+      "name": "Code in JavaScript1"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "8abeb32b-2bef-47b5-8e63-7cddac8c1a71",
+              "leftValue": "={{ $json.iterationCount }}",
+              "rightValue": 2,
+              "operator": {
+                "type": "number",
+                "operation": "lte"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        3408,
+        336
+      ],
+      "id": "ace62ab2-828e-410f-8328-ca892a55b0da",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "jsCode": "/**\n * Advanced Entity Extraction Node\n * Logic: Extracts clean names and emails from complex headers and snippets.\n */\n\n// 1. Process all incoming items\nreturn $input.all().map(item => {\n    const json = item.json;\n\n    // --- STEP 1: Identify the source string ---\n    // We check 'senderEmail' (from your previous node) or the raw 'From' field\n    let rawSender = json.senderEmail || json.From || \"\";\n    \n    // Fallback: If From is hidden in payload headers (Gmail standard)\n    if (!rawSender && json.payload?.headers) {\n        const fromHeader = json.payload.headers.find(h => h.name === 'From');\n        rawSender = fromHeader ? fromHeader.value : \"\";\n    }\n\n    // --- STEP 2: Extraction Logic ---\n    let cleanName = \"Unknown\";\n    let cleanEmail = \"Unknown\";\n\n    if (rawSender.includes(\"<\")) {\n        // Pattern matches: Name <email@domain.com>\n        const match = rawSender.match(/^(.*?)\\s*<(.*?)>$/);\n        if (match) {\n            // Remove quotes if the name is \"John Doe\"\n            cleanName = match[1].replace(/['\"]/g, \"\").trim();\n            cleanEmail = match[2].trim();\n        }\n    } else if (rawSender.includes(\"@\")) {\n        // If it's just an email, use the part before @ as the name\n        cleanEmail = rawSender.trim();\n        cleanName = cleanEmail.split(\"@\")[0];\n    }\n\n    // --- STEP 3: Snippet Context ---\n    const snippet = json.snippet || json.snippetPreview || \"\";\n\n    // Return the high-level structured object\n    return {\n        json: {\n            extractedName: cleanName,\n            extractedEmail: cleanEmail,\n            originalResponse: json.response || \"not detected\",\n            emailId: json.emailId || json.id,\n            processedAt: new Date().toISOString()\n        }\n    };\n});"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3664,
+        32
+      ],
+      "id": "a4691502-a913-44db-bb44-0bc015e0d068",
+      "name": "Code in JavaScript Find Name"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "f2d42c2b-028b-41eb-a4b5-52885a510b63",
+              "leftValue": "={{ $json.id }}",
+              "rightValue": "={{ $('Send a confirmation message').item.json.id }}",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            },
+            {
+              "id": "ca79d8bb-cadd-450e-825b-622b749c5bc6",
+              "leftValue": "={{ $json.threadId }}",
+              "rightValue": "={{ $('Send a confirmation message').item.json.threadId }}",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        2704,
+        0
+      ],
+      "id": "fdd3ed1b-6f9b-46a9-b7fc-5ab9473da2c8",
+      "name": "If1"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "deba5bdd-401a-4e98-af68-5423e5b419d0",
+              "leftValue": "={{ $json.response }}",
+              "rightValue": "no",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        3424,
+        -48
+      ],
+      "id": "5d6114fe-2a1c-4d5e-8253-ba609c94eb50",
+      "name": "If2"
+    },
+    {
+      "parameters": {
+        "amount": 30
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        2448,
+        512
+      ],
+      "id": "44c19a12-d8a7-4462-af74-773b70005c04",
+      "name": "Wait2",
+      "webhookId": "c6a2b8e0-a8c3-493b-ba00-9f18bb252bb4"
+    },
+    {
+      "parameters": {
+        "jsCode": "// 1. Access the workflow's persistent memory\nconst staticData = $getWorkflowStaticData('global');\n\n// 2. Use a Unique Identifier (Email) so users don't share a counter\nconst userKey = $input.item.json.senderEmail || $input.item.json.extractedEmail || \"unknown\";\n\n// 3. Initialize the storage object if this is the first time the workflow ever runs\nif (!staticData.userCounters) {\n    staticData.userCounters = {};\n}\n\n// 4. Increment ONLY this specific user's count\nstaticData.userCounters[userKey] = (staticData.userCounters[userKey] || 0) + 1;\n\nconst currentCount = staticData.userCounters[userKey];\n\n// 5. Output the data for your \"If Node\" to check\nreturn {\n  json: {\n    ...$input.item.json,\n    iterationCount: currentCount,\n    shouldBreakLoop: currentCount >= 5, // The logic gate\n    userKey: userKey\n  }\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2656,
+        272
+      ],
+      "id": "e409ea29-3161-4e8e-a1e7-cb8db3ca53be",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "8abeb32b-2bef-47b5-8e63-7cddac8c1a71",
+              "leftValue": "={{ $json.iterationCount }}",
+              "rightValue": 2,
+              "operator": {
+                "type": "number",
+                "operation": "lte"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        2864,
+        272
+      ],
+      "id": "83cd241d-7b1a-4d3d-81c4-221a983619fb",
+      "name": "If3"
+    },
+    {
+      "parameters": {
+        "jsCode": "const snippet = $input.first().json.snippet || \"\";\nconst email = $input.first().json.To || \"\";\n\n// ---- Extract Name from \"Dear Mr. Name,\" ----\nlet nameMatch = snippet.match(/Dear\\s+(Mr\\.|Ms\\.|Mrs\\.|Dr\\.)?\\s*([A-Za-z]+\\s[A-Za-z]+)/i);\n\nlet extractedName = nameMatch ? nameMatch[2].trim() : \"Not Found\";\n\nreturn [\n  {\n    json: {\n      extractedName: extractedName,\n      extractedEmail: email\n    }\n  }\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2704,
+        512
+      ],
+      "id": "12a08d4f-b36c-4857-8479-abc3607cf323",
+      "name": "Code in JavaScript Find Name2"
+    },
+    {
+      "parameters": {
+        "jsCode": "const sheetNode = $('Code in JavaScript3 Gender Find').first().json;\n\nconst sheetName = sheetNode.Name || \"\";\nconst gender = (sheetNode.Gender || \"\").trim().toLowerCase();\n\nconst extractedName = $input.first().json.extractedName || \"\";\n\nconst normalize = (name) => name.replace(/\\s+/g, '').toLowerCase();\n\nlet finalName = extractedName;\n\nif (normalize(sheetName) === normalize(extractedName)) {\n  if (gender === \"male\") {\n    finalName = \"Mr. \" + extractedName;\n  } else if (gender === \"female\") {\n    finalName = \"Ms. \" + extractedName;\n  }\n  // If gender is anything else → do nothing\n}\n\nreturn [\n  {\n    json: {\n      ...$input.first().json,\n      finalName: finalName\n    }\n  }\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2912,
+        512
+      ],
+      "id": "f6e08aee-ce8a-4e78-9a2d-83989ff8df06",
+      "name": "Code in JavaScript4 Gender3"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Get many messages Check Response').item.json.To }}",
+        "subject": "Application Response Time Expired – Re-submission Required",
+        "emailType": "text",
+        "message": "=Dear {{ $json.extractedName }},\n\nWe hope you are doing well.\n\nWe noticed that we did not receive your confirmation response within the requested 15-minute timeframe regarding your application.\n\nAs timely confirmation is required to proceed with the verification process and maintain the project schedule, your previous application session has now expired. To continue, you will need to submit a new application.\n\nWe sincerely appreciate your interest in StepOne Investing and are excited about the opportunity to work with you on your investment journey. We encourage you to reapply at your convenience. Once resubmitted, please ensure your confirmation response is sent within the specified time window to avoid delays.\n\nIf you need any assistance during the process, our team will be happy to help.\n\nWarm regards,\nTeam StepOne Investing",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        3104,
+        512
+      ],
+      "id": "55b07909-66d6-4ad1-9313-99271b9cb675",
+      "name": "Send a message1 Sorry2",
+      "webhookId": "fb0783ec-2c6f-4955-bcb2-0c59c5257890",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "OZZ1L0iofs7FKdQa",
+          "name": "Gmail account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1bGdyJ6tALqu-1Xs_DgVUc2jNKLzwlkmC3VgW4H8FUdE",
+          "mode": "list",
+          "cachedResultName": "Test n8n",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1bGdyJ6tALqu-1Xs_DgVUc2jNKLzwlkmC3VgW4H8FUdE/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1515659725,
+          "mode": "list",
+          "cachedResultName": "Form Responses 1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1bGdyJ6tALqu-1Xs_DgVUc2jNKLzwlkmC3VgW4H8FUdE/edit#gid=1515659725"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [
+            "Email Address"
+          ],
+          "schema": [
+            {
+              "id": "Timestamp",
+              "displayName": "Timestamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Address",
+              "displayName": "Address",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Phone number",
+              "displayName": "Phone number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Comments",
+              "displayName": "Comments",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Gender",
+              "displayName": "Gender",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email Address",
+              "displayName": "Email Address",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Client ID",
+              "displayName": "Client ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Responce",
+              "displayName": "Responce",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "threadId",
+              "displayName": "threadId",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "snippet",
+              "displayName": "snippet",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "payload",
+              "displayName": "payload",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "sizeEstimate",
+              "displayName": "sizeEstimate",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "historyId",
+              "displayName": "historyId",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "internalDate",
+              "displayName": "internalDate",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "labels",
+              "displayName": "labels",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "From",
+              "displayName": "From",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Subject",
+              "displayName": "Subject",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "To",
+              "displayName": "To",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "labelIds",
+              "displayName": "labelIds",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        4304,
+        112
+      ],
+      "id": "744aab37-1834-418f-a36c-1066249abfe5",
+      "name": "Update row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "2rw7CcF6EQRABuAC",
+          "name": "Google Sheets account 3"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Google Sheets Trigger": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript Shortlist",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet Host Gmail",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait1": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet Host Gmail",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet1": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript2 Final Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript2 Final Data": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript2": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript4 Gender",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Update row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript Shortlist": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript3 Gender Find",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript3 Gender Find": {
+      "main": [
+        [
+          {
+            "node": "Send a confirmation message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a confirmation message": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet Host Gmail": {
+      "main": [
+        [
+          {
+            "node": "Get many messages Check Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get many messages Check Response": {
+      "main": [
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript1 Response Detection": {
+      "main": [
+        [
+          {
+            "node": "If Check Empty or Not empty",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If Check Empty or Not empty": {
+      "main": [
+        [
+          {
+            "node": "If2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Code in JavaScript1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript4 Gender": {
+      "main": [
+        [
+          {
+            "node": "Send a message2 Client ID",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript4 Gender1": {
+      "main": [
+        [
+          {
+            "node": "Send a message1 Sorry",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript1": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Wait1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    },
+    "Code in JavaScript Find Name": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript4 Gender1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript1 Response Detection",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If2": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Code in JavaScript Find Name",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait2": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet Host Gmail",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "If3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If3": {
+      "main": [
+        [
+          {
+            "node": "Wait2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Code in JavaScript Find Name2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript Find Name2": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript4 Gender3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript4 Gender3": {
+      "main": [
+        [
+          {
+            "node": "Send a message1 Sorry2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "versionId": "dbcbc114-fe58-43c9-8013-ae5bd007df11",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "5ada405d7d05ee0fc45d8b28b7498ef62601b082c3bb798252a54613f8c4946d"
+  },
+  "id": "yG5n39euKDDIDwwSjjDIP",
+  "tags": []
+}
